@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-from flask import Blueprint, jsonify
-
-sensores_bp = Blueprint("sensores", __name__)
-
-@sensores_bp.route("/sensores", methods=["GET"])
-def get_sensores():
-    return jsonify({"mensagem": "Sensores funcionando!"})
-=======
 from flask import Blueprint, request, jsonify
 from utils.estoque import atualizar_estoque, carregar_estoque, salvar_estoque
 
@@ -37,4 +28,3 @@ def atualizar_sensores():
     salvar_estoque(estoque)
 
     return jsonify({"mensagem": f"Estoque do ingrediente '{id_ingrediente}' atualizado com sucesso!"}), 200
->>>>>>> main

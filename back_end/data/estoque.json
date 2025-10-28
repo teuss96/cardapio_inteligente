@@ -1,4 +1,5 @@
 {
-  "tomate": { "peso": 2500, "validade": "2025-10-28" },
-  "queijo": { "peso": 1200, "validade": "2025-11-02" }
+  
+  "queijo": { "peso":100, "validade": "2027-10-28" },
+  "tomate": { "peso":100, "validade": "2025-10-28" }
 }

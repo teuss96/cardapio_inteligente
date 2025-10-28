@@ -1,6 +1,6 @@
 {
   "pizza_marguerita": {
-    "ingredientes": ["tomate", "queijo"],
+    "ingredientes": ["queijo","tomate"],
     "preco_base": 35.0
   },
   "salada": {
