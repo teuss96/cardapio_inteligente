@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import sqlite3
 from tkinter import ttk, messagebox
+from datetime import datetime # Importação necessária para validação de data
 
 # ---------- Configuração ----------
 ctk.set_appearance_mode("dark")
@@ -14,20 +15,25 @@ def conectar():
     return sqlite3.connect(DB_PATH)
 
 
+
 def criar_tabelas():
     con = conectar()
     cur = con.cursor()
+    # CORREÇÃO 1: Adicionando 'validade' à tabela ingrediente e 'preco_base' à tabela prato
     cur.executescript("""
     CREATE TABLE IF NOT EXISTS ingrediente (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome TEXT NOT NULL,
-        peso_disponivel REAL NOT NULL
+        peso_disponivel REAL NOT NULL,
+        quantidade INTEGER 
+        validade DATE -- Adicionado para suportar a lógica de preços/vencimento
     );
 
     CREATE TABLE IF NOT EXISTS prato (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome TEXT NOT NULL,
-        descricao TEXT
+        descricao TEXT,
+        preco_base REAL -- Adicionado para armazenar o preço base
     );
 
     CREATE TABLE IF NOT EXISTS prato_ingrediente (
@@ -38,7 +44,9 @@ def criar_tabelas():
         FOREIGN KEY (prato_id) REFERENCES prato (id),
         FOREIGN KEY (ingrediente_id) REFERENCES ingrediente (id)
     );
-    """)
+    """
+    )
+
     con.commit()
     con.close()
 
@@ -56,9 +64,10 @@ def show_error(msg):
 def ui_adicionar_ingrediente():
     nome = ing_nome.get().strip()
     peso_txt = ing_peso.get().strip()
+    validade_txt = ing_validade.get().strip() # NOVO CAMPO
 
-    if not nome or not peso_txt:
-        show_error("Preencha nome e peso disponível.")
+    if not nome or not peso_txt or not validade_txt:
+        show_error("Preencha nome, peso disponível e validade.")
         return
 
     try:
@@ -67,14 +76,23 @@ def ui_adicionar_ingrediente():
         show_error("Peso deve ser um número (gramas).")
         return
 
+    try:
+        # Valida se a data está no formato YYYY-MM-DD
+        datetime.strptime(validade_txt, "%Y-%m-%d") 
+    except ValueError:
+        show_error("Formato de validade inválido. Use YYYY-MM-DD.")
+        return
+
     con = conectar()
     cur = con.cursor()
-    cur.execute("INSERT INTO ingrediente (nome, peso_disponivel) VALUES (?, ?)", (nome, peso))
+    # CORREÇÃO 2: Adicionando validade na inserção
+    cur.execute("INSERT INTO ingrediente (nome, peso_disponivel, validade) VALUES (?, ?, ?)", (nome, peso, validade_txt))
     con.commit()
     con.close()
 
     ing_nome.delete(0, "end")
     ing_peso.delete(0, "end")
+    ing_validade.delete(0, "end")
     carregar_ingredientes()
     show_info(f"Ingrediente '{nome}' adicionado com sucesso.")
 
@@ -85,9 +103,11 @@ def carregar_ingredientes():
 
     con = conectar()
     cur = con.cursor()
-    cur.execute("SELECT id, nome, peso_disponivel FROM ingrediente ORDER BY id")
-    for iid, nome, peso in cur.fetchall():
-        tbl_ing.insert("", "end", values=(iid, nome, f"{peso:.2f} g"))
+    # CORREÇÃO 3: Selecionando a validade
+    cur.execute("SELECT id, nome, peso_disponivel, validade FROM ingrediente ORDER BY id")
+    for iid, nome, peso, validade in cur.fetchall():
+        # CORREÇÃO 4: Inserindo a validade na Treeview
+        tbl_ing.insert("", "end", values=(iid, nome, f"{peso:.2f} g", validade))
     con.close()
 
 
@@ -113,21 +133,30 @@ def ui_remover_ingrediente():
 def ui_adicionar_prato():
     nome = prato_nome.get().strip()
     desc = prato_desc.get().strip()
+    preco_txt = prato_preco.get().strip() # NOVO CAMPO
 
-    if not nome:
-        show_error("Informe o nome do prato.")
+    if not nome or not preco_txt:
+        show_error("Informe o nome e o preço base do prato.")
         return
 
+    try:
+        preco_base = float(preco_txt)
+    except ValueError:
+        show_error("O preço base deve ser um número.")
+        return
+        
     con = conectar()
     cur = con.cursor()
-    cur.execute("INSERT INTO prato (nome, descricao) VALUES (?, ?)", (nome, desc))
+    # CORREÇÃO 5: Adicionando preco_base na inserção
+    cur.execute("INSERT INTO prato (nome, descricao, preco_base) VALUES (?, ?, ?)", (nome, desc, preco_base))
     con.commit()
     con.close()
 
     prato_nome.delete(0, "end")
     prato_desc.delete(0, "end")
+    prato_preco.delete(0, "end") # Limpar campo
     carregar_pratos()
-    show_info(f"Prato '{nome}' adicionado com sucesso.")
+    show_info(f"Prato '{nome}' adicionado com sucesso. Preço base: R${preco_base:.2f}")
 
 
 def carregar_pratos():
@@ -136,10 +165,13 @@ def carregar_pratos():
 
     con = conectar()
     cur = con.cursor()
-    cur.execute("SELECT id, nome, descricao FROM prato ORDER BY id")
+    # CORREÇÃO 6: Selecionando o preco_base
+    cur.execute("SELECT id, nome, descricao, preco_base FROM prato ORDER BY id")
     pratos = cur.fetchall()
-    for pid, nome, desc in pratos:
-        tbl_pratos.insert("", "end", values=(pid, nome, desc))
+    # CORREÇÃO 7: Exibindo o preco_base
+    for pid, nome, desc, preco in pratos:
+        preco_txt = f"R${preco:.2f}" if preco is not None else "-"
+        tbl_pratos.insert("", "end", values=(pid, nome, desc, preco_txt))
     con.close()
     carregar_receitas()
 
@@ -184,7 +216,7 @@ def ui_vincular_ingrediente():
     con = conectar()
     cur = con.cursor()
 
-    # valida existência
+    # valida existência de prato e ingrediente (melhor prática de verificação)
     cur.execute("SELECT 1 FROM prato WHERE id = ?", (pid,))
     if not cur.fetchone():
         con.close()
@@ -197,10 +229,23 @@ def ui_vincular_ingrediente():
         show_error(f"Ingrediente ID {iid} não existe.")
         return
 
-    cur.execute("""
-    INSERT INTO prato_ingrediente (prato_id, ingrediente_id, quantidade_necessaria)
-    VALUES (?, ?, ?)
-    """, (pid, iid, qtd))
+    # CORREÇÃO 8: Verifica se já existe o vínculo para fazer um UPDATE ou INSERT
+    cur.execute("SELECT id FROM prato_ingrediente WHERE prato_id = ? AND ingrediente_id = ?", (pid, iid))
+    existe = cur.fetchone()
+
+    if existe:
+        cur.execute("""
+        UPDATE prato_ingrediente SET quantidade_necessaria = ?
+        WHERE prato_id = ? AND ingrediente_id = ?
+        """, (qtd, pid, iid))
+        msg = f"Vínculo Prato {pid}/Ingrediente {iid} atualizado para {qtd}g."
+    else:
+        cur.execute("""
+        INSERT INTO prato_ingrediente (prato_id, ingrediente_id, quantidade_necessaria)
+        VALUES (?, ?, ?)
+        """, (pid, iid, qtd))
+        msg = f"Ingrediente {iid} vinculado ao prato {pid} com {qtd}g."
+        
     con.commit()
     con.close()
 
@@ -208,7 +253,7 @@ def ui_vincular_ingrediente():
     vinc_ing_id.delete(0, "end")
     vinc_qtd.delete(0, "end")
     carregar_receitas()
-    show_info(f"Ingrediente {iid} vinculado ao prato {pid}.")
+    show_info(msg)
 
 
 def ui_remover_prato():
@@ -245,9 +290,14 @@ def ui_verificar_disponibilidade():
     con = conectar()
     cur = con.cursor()
     cur.execute("""
-    SELECT i.nome, i.peso_disponivel, pi.quantidade_necessaria
+    SELECT 
+        i.nome, 
+        i.peso_disponivel, 
+        pi.quantidade_necessaria,
+        p.nome
     FROM prato_ingrediente pi
     JOIN ingrediente i ON i.id = pi.ingrediente_id
+    JOIN prato p ON p.id = pi.prato_id
     WHERE pi.prato_id = ?
     """, (pid,))
     itens = cur.fetchall()
@@ -256,10 +306,13 @@ def ui_verificar_disponibilidade():
     if not itens:
         show_error("Prato não encontrado ou sem ingredientes vinculados.")
         return
+    
+    # Pega o nome do prato para exibir no resultado
+    prato_nome_verif = itens[0][3]
 
     linhas = []
     pode = True
-    for nome, disp, nec in itens:
+    for nome, disp, nec, _ in itens:
         ok = disp >= nec
         if not ok:
             pode = False
@@ -267,13 +320,13 @@ def ui_verificar_disponibilidade():
 
     resumo = "\n".join(linhas)
     status_final = "\n\n🍽️ Pode preparar!" if pode else "\n\n⚠️ Ingredientes insuficientes."
-    verif_result.configure(text=f"Verificação do prato {pid}:\n{resumo}{status_final}")
+    verif_result.configure(text=f"Verificação do prato {pid} ({prato_nome_verif}):\n{resumo}{status_final}")
 
 
 # ---------- Interface ----------
 janela = ctk.CTk()
 janela.title("🍳 Gerenciador de Cardápio (Estoque e Receitas)")
-janela.geometry("1000x700")
+janela.geometry("1200x700") # Aumentando a largura
 
 tabs = ctk.CTkTabview(janela)
 tabs.pack(padx=12, pady=12, fill="both", expand=True)
@@ -289,16 +342,26 @@ ing_nome = ctk.CTkEntry(frm_ing_left, placeholder_text="Nome")
 ing_nome.pack(pady=4)
 ing_peso = ctk.CTkEntry(frm_ing_left, placeholder_text="Peso disponível (g)")
 ing_peso.pack(pady=4)
+# NOVO CAMPO: Validade
+ing_validade = ctk.CTkEntry(frm_ing_left, placeholder_text="Validade (YYYY-MM-DD)")
+ing_validade.pack(pady=4)
+# FIM NOVO CAMPO
 ctk.CTkButton(frm_ing_left, text="➕ Adicionar", command=ui_adicionar_ingrediente).pack(pady=8)
 ctk.CTkButton(frm_ing_left, text="🗑️ Remover selecionado", fg_color="red", command=ui_remover_ingrediente).pack(pady=4)
 ctk.CTkButton(frm_ing_left, text="🔄 Atualizar lista", command=carregar_ingredientes).pack(pady=4)
 
 frm_ing_right = ctk.CTkFrame(aba_ing)
 frm_ing_right.pack(side="right", fill="both", expand=True, padx=10, pady=10)
-tbl_ing = ttk.Treeview(frm_ing_right, columns=("ID", "Nome", "Disponível"), show="headings", height=18)
-for col in ("ID", "Nome", "Disponível"):
-    tbl_ing.heading(col, text=col)
-    tbl_ing.column(col, anchor="center")
+# CORREÇÃO 9: Adicionando a coluna Validade
+tbl_ing = ttk.Treeview(frm_ing_right, columns=("ID", "Nome", "Disponível", "Validade"), show="headings", height=18)
+tbl_ing.heading("ID", text="ID")
+tbl_ing.heading("Nome", text="Nome")
+tbl_ing.heading("Disponível", text="Disponível")
+tbl_ing.heading("Validade", text="Validade")
+tbl_ing.column("ID", width=40, anchor="center")
+tbl_ing.column("Nome", width=200, anchor="w")
+tbl_ing.column("Disponível", width=120, anchor="center")
+tbl_ing.column("Validade", width=120, anchor="center")
 tbl_ing.pack(fill="both", expand=True)
 
 # --- Aba Pratos e Receitas ---
@@ -312,6 +375,10 @@ prato_nome = ctk.CTkEntry(frm_prato_left, placeholder_text="Nome do prato")
 prato_nome.pack(pady=4)
 prato_desc = ctk.CTkEntry(frm_prato_left, placeholder_text="Descrição")
 prato_desc.pack(pady=4)
+# NOVO CAMPO: Preço Base
+prato_preco = ctk.CTkEntry(frm_prato_left, placeholder_text="Preço Base (R$)")
+prato_preco.pack(pady=4)
+# FIM NOVO CAMPO
 ctk.CTkButton(frm_prato_left, text="➕ Adicionar prato", command=ui_adicionar_prato).pack(pady=8)
 ctk.CTkButton(frm_prato_left, text="🗑️ Remover prato (selecionado)", fg_color="red", command=ui_remover_prato).pack(pady=4)
 ctk.CTkButton(frm_prato_left, text="🔄 Atualizar listas", command=carregar_pratos).pack(pady=4)
@@ -323,15 +390,21 @@ vinc_ing_id = ctk.CTkEntry(frm_prato_left, placeholder_text="ID do ingrediente")
 vinc_ing_id.pack(pady=4)
 vinc_qtd = ctk.CTkEntry(frm_prato_left, placeholder_text="Quantidade (g)")
 vinc_qtd.pack(pady=4)
-ctk.CTkButton(frm_prato_left, text="🔗 Vincular", command=ui_vincular_ingrediente).pack(pady=8)
+ctk.CTkButton(frm_prato_left, text="🔗 Vincular/Atualizar", command=ui_vincular_ingrediente).pack(pady=8)
 
 frm_prato_right = ctk.CTkFrame(aba_pratos)
 frm_prato_right.pack(side="right", fill="both", expand=True, padx=10, pady=10)
 ctk.CTkLabel(frm_prato_right, text="Pratos", font=("Segoe UI", 13, "bold")).pack(anchor="w")
-tbl_pratos = ttk.Treeview(frm_prato_right, columns=("ID", "Nome", "Descrição"), show="headings", height=10)
-for col in ("ID", "Nome", "Descrição"):
-    tbl_pratos.heading(col, text=col)
-    tbl_pratos.column(col, anchor="center")
+# CORREÇÃO 10: Adicionando a coluna Preço Base
+tbl_pratos = ttk.Treeview(frm_prato_right, columns=("ID", "Nome", "Descrição", "Preço Base"), show="headings", height=10)
+tbl_pratos.heading("ID", text="ID")
+tbl_pratos.heading("Nome", text="Nome")
+tbl_pratos.heading("Descrição", text="Descrição")
+tbl_pratos.heading("Preço Base", text="Preço Base")
+tbl_pratos.column("ID", width=40, anchor="center")
+tbl_pratos.column("Nome", width=150, anchor="w")
+tbl_pratos.column("Descrição", width=250, anchor="w")
+tbl_pratos.column("Preço Base", width=80, anchor="center")
 tbl_pratos.pack(fill="x", padx=0, pady=(4, 12))
 
 ctk.CTkLabel(frm_prato_right, text="Receitas (ingredientes por prato)", font=("Segoe UI", 13, "bold")).pack(anchor="w")
