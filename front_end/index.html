@@ -15,77 +15,23 @@
       <div class="brand">Cardápio Inteligente</div>
       <nav class="nav">
         <a class="nav-link active" href="index.html">Home</a>
-        <a class="nav-link" href="login.html">Login Cliente</a>
-        <a class="nav-link" href="login.html#restaurante">Login Restaurante</a>
         <a class="nav-link" href="sobre.html">Sobre</a>
       </nav>
     </div>
   </header>
 
   <main class="container content">
-    <section class="secao">
-      <h2 class="titulo-secao">Entrada</h2>
-      <div class="grid-cardapio">
-        <article class="card prato" data-nome="Bruschetta" data-preco="R$ 25,00" data-img="https://images.unsplash.com/photo-1604908554007-37bf0c9a59a1?q=80&w=1200&auto=format&fit=crop">
-          <h3 class="card-titulo">Bruschetta</h3>
-          <p class="card-desc">Maciocatta à base de molho de tomate com farogo empanado e queijo masserizado.</p>
-          <span class="card-preco">R$ 25,00</span>
-        </article>
-        <article class="card prato" data-nome="Bolinho de Carne Seca" data-preco="R$ 20,00" data-img="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1200&auto=format&fit=crop">
-          <h3 class="card-titulo">Bolinho de Carne Seca</h3>
-          <p class="card-desc">Maciocatta à base de molho de tomate com farogo empanado e queijo masserizado.</p>
-          <span class="card-preco">R$ 20,00</span>
-        </article>
-        <article class="card prato" data-nome="Carpaccio de Salmão" data-preco="R$ 22,00" data-img="https://images.unsplash.com/photo-1544025162-8c9ae1fdde2d?q=80&w=1200&auto=format&fit=crop">
-          <h3 class="card-titulo">Carpaccio de Salmão</h3>
-          <p class="card-desc">Maciocatta à base de molho de tomate com farogo empanado e queijo masserizado.</p>
-          <span class="card-preco">R$ 22,00</span>
-        </article>
-      </div>
-    </section>
+    <div id="loading" class="loading-state" style="display: none;">
+      <p>Carregando cardápio...</p>
+    </div>
 
-    <section class="secao">
-      <h2 class="titulo-secao">Pratos Principais</h2>
-      <div class="grid-cardapio">
-        <article class="card prato" data-nome="Filé à Parmegiana" data-preco="R$ 48,00" data-img="https://images.unsplash.com/photo-1604908176997-4312f28ef1e1?q=80&w=1200&auto=format&fit=crop">
-          <h3 class="card-titulo">Filé à Parmegiana</h3>
-          <p class="card-desc">Maciocatta à base de molho de tomate com farogo empanado e queijo masserizado.</p>
-          <span class="card-preco">R$ 48,00</span>
-        </article>
-        <article class="card prato" data-nome="Risoto de Camarão" data-preco="R$ 52,90" data-img="https://images.unsplash.com/photo-1544025162-9b18f1d2a3f9?q=80&w=1200&auto=format&fit=crop">
-          <h3 class="card-titulo">Risoto de Camarão</h3>
-          <p class="card-desc">Maciocatta à base de molho de tomate com farogo empanado e queijo masserizado.</p>
-          <span class="card-preco">R$ 52,90</span>
-        </article>
-        <article class="card prato indisponivel" data-nome="Picanha na Chapa" data-preco="R$ 58,00" data-img="https://images.unsplash.com/photo-1551183053-bf91a1d81141?q=80&w=1200&auto=format&fit=crop">
-          <h3 class="card-titulo">Picanha na Chapa</h3>
-          <p class="card-desc">Maciocatta à base de molho de tomate com farogo empanado e queijo masserizado.</p>
-          <span class="card-preco">R$ 58,00</span>
-          <span class="badge">Indisponível</span>
-        </article>
-      </div>
-    </section>
+    <div id="erro" class="error-state" style="display: none;">
+      <p id="erro-mensagem"></p>
+      <button onclick="carregarCardapio()" class="btn primario">Tentar novamente</button>
+    </div>
 
-    <section class="secao">
-      <h2 class="titulo-secao">Sobremesas</h2>
-      <div class="grid-cardapio">
-        <article class="card prato" data-nome="Pudim de Leite" data-preco="R$ 12,00" data-img="https://images.unsplash.com/photo-1600891964092-4316c288032e?q=80&w=1200&auto=format&fit=crop">
-          <h3 class="card-titulo">Pudim de Leite</h3>
-          <p class="card-desc">Maciocatta à base de molho de tomate com farogo empanado e queijo masserizado.</p>
-          <span class="card-preco">R$ 12,00</span>
-        </article>
-        <article class="card prato" data-nome="Tiramisu" data-preco="R$ 25,00" data-img="https://images.unsplash.com/photo-1587393855529-c0e4a5b2c4e4?q=80&w=1200&auto=format&fit=crop">
-          <h3 class="card-titulo">Tiramisu</h3>
-          <p class="card-desc">Maciocatta à base de molho de tomate com farogo empanado e queijo masserizado.</p>
-          <span class="card-preco">R$ 25,00</span>
-        </article>
-        <article class="card prato" data-nome="Cheesecake de Frutas Vermelhas" data-preco="R$ 25,00" data-img="https://images.unsplash.com/photo-1497051788611-2c64812349b4?q=80&w=1200&auto=format&fit=crop">
-          <h3 class="card-titulo">Cheesecake de Frutas Vermelhas</h3>
-          <p class="card-desc">Maciocatta à base de molho de tomate com farogo empanado e queijo masserizado.</p>
-          <span class="card-preco">R$ 25,00</span>
-        </article>
-      </div>
-    </section>
+    <div id="cardapio-container">
+    </div>
   </main>
 
   <div class="modal" id="modal">
@@ -106,6 +52,7 @@
     </div>
   </footer>
 
+  <script src="api.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
