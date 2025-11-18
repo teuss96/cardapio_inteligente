@@ -1,33 +1,46 @@
 const CATEGORIAS = {
-  'Entrada': 'Entrada',
-  'Pratos Principais': 'Pratos Principais',
+  'Bebidas': 'Bebidas',
+  'Pratos': 'Pratos',
   'Sobremesas': 'Sobremesas',
 };
 
-const ORDEM_CATEGORIAS = ['Entrada', 'Pratos Principais', 'Sobremesas'];
+const ORDEM_CATEGORIAS = ['Bebidas', 'Pratos', 'Sobremesas'];
 
 function criarCardPrato(prato) {
-  const disponivel = prato.disponivel !== false;
-  const precoFormatado = formatarPreco(prato.preco || prato.valor);
-  const imagem = prato.imagem || prato.imagem_url || prato.foto || '';
-  const descricao = prato.descricao || prato.desc || '';
-  
+  const disponivel = Boolean(prato.status);
+  const preco = Number(prato.preco ?? 0);
+  const precoFmt = formatarPreco(preco);
+  const imagem = prato.imagem || prato.foto || '';
+  const nomePrato = escapeHtml(prato.nome || 'Alimento');
+  const descPrato = escapeHtml(prato.desc || '');
+  const imgSrc = escapeHtml(imagem || 'https://via.placeholder.com/400x200/FBEDC8/75403C?text=Sem+Imagem');
+  const emPromocao = prato.promocao === true;
+
   const classes = ['card', 'prato'];
   if (!disponivel) classes.push('indisponivel');
-  
+  if (emPromocao) classes.push('em-promocao');
+
   return `
     <article class="${classes.join(' ')}" 
              data-id="${prato.id || ''}"
-             data-nome="${prato.nome || prato.titulo || ''}"
-             data-preco="${precoFormatado}"
-             data-img="${imagem}"
-             data-desc="${descricao}">
-      <h3 class="card-titulo">${prato.nome || prato.titulo || 'Prato'}</h3>
-      <p class="card-desc">${descricao || 'Descrição não disponível.'}</p>
-      <span class="card-preco">${precoFormatado}</span>
+             data-nome="${nomePrato}"
+             data-preco="${precoFmt}"
+             data-img="${imgSrc}"
+             data-desc="${descPrato}"
+             data-promocao="${emPromocao ? 'true' : 'false'}">
+      <h3 class="card-titulo">${nomePrato}</h3>
+      <p class="card-desc">${descPrato || 'Descrição não disponível.'}</p>
+      <span class="card-preco">${precoFmt}</span>
+      ${emPromocao ? '<span class="badge badge-promo" aria-label="Promoção do dia">Promoção</span>' : ''}
       ${!disponivel ? '<span class="badge">Indisponível</span>' : ''}
     </article>
   `;
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 function criarSecao(categoria, pratos) {
@@ -106,21 +119,25 @@ async function carregarCardapio() {
   mostrarLoading(true);
   
   try {
+    // Buscar cardápio da API Python
     const resultado = await buscarCardapio();
     
     if (resultado.erro) {
       mostrarErro(resultado.mensagem);
+      console.error('Erro ao buscar cardápio:', resultado);
       return;
     }
     
     let pratos = resultado.dados;
     
+    // Suporte a diferentes formatos de resposta da API
     if (pratos && typeof pratos === 'object' && !Array.isArray(pratos)) {
       pratos = pratos.pratos || pratos.data || pratos.items || [];
     }
     
     if (!Array.isArray(pratos)) {
       mostrarErro('Formato de dados inválido recebido do servidor.');
+      console.error('Dados recebidos:', pratos);
       return;
     }
     
@@ -129,12 +146,14 @@ async function carregarCardapio() {
       return;
     }
     
+    console.log(`✅ ${pratos.length} prato(s) carregado(s) com sucesso!`);
+    
     mostrarLoading(false);
     renderizarCardapio(pratos);
     
   } catch (error) {
-    console.error('Erro ao carregar cardápio:', error);
-    mostrarErro('Erro inesperado ao carregar o cardápio. Tente novamente.');
+    console.error('Erro inesperado ao carregar cardápio:', error);
+    mostrarErro('Erro inesperado ao carregar o cardápio. Verifique se a API está rodando.');
   }
 }
 
@@ -145,7 +164,7 @@ function inicializarModal() {
   const title = document.getElementById('modalTitle');
   const img = document.getElementById('modalImg');
   const price = document.getElementById('modalPrice');
-  const desc = document.querySelector('.modal-desc');
+  const desc = document.getElementById('modalDesc');
 
   document.removeEventListener('click', handleCardClick);
   document.addEventListener('click', handleCardClick);
@@ -165,7 +184,10 @@ function inicializarModal() {
       const descricao = prato.getAttribute('data-desc');
       
       if (title) title.textContent = nome || '';
-      if (img && imgSrc) img.src = imgSrc;
+      if (img && imgSrc) {
+        img.src = imgSrc;
+        img.alt = `Imagem de ${nome}`;
+      }
       if (price) price.textContent = preco || '';
       if (desc) desc.textContent = descricao || 'Descrição não disponível.';
       
@@ -179,6 +201,12 @@ function inicializarModal() {
 
   modal.addEventListener('click', function (e) {
     if (e.target === modal) fecharModal();
+  });
+  
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal.classList.contains('show')) {
+      fecharModal();
+    }
   });
 }
 
