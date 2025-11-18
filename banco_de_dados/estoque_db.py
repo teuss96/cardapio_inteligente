@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS produtos (
 
     validade TEXT,
 
-    lote TEXT,
+    Peso TEXT,
 
     quantidade INTEGER DEFAULT 0
 
@@ -152,7 +152,7 @@ def cadastrar_produto():
 
     validade = entry_validade.get().strip()
 
-    lote = entry_lote.get().strip()
+    Peso = entry_Peso.get().strip()
 
     qtd_txt = entry_qtd.get().strip()
 
@@ -184,11 +184,11 @@ def cadastrar_produto():
 
     cursor.execute("""
 
-        INSERT INTO produtos (codigo, nome, validade, lote, quantidade)
+        INSERT INTO produtos (codigo, nome, validade, Peso, quantidade)
 
         VALUES (?, ?, ?, ?, ?)
 
-    """, (codigo, nome, validade, lote, quantidade))
+    """, (codigo, nome, validade, Peso, quantidade))
 
     conn.commit()
 
@@ -210,7 +210,7 @@ def limpar_campos():
 
     entry_validade.delete(0, tk.END)
 
-    entry_lote.delete(0, tk.END)
+    entry_Peso.delete(0, tk.END)
 
     entry_qtd.delete(0, tk.END)
 
@@ -234,7 +234,7 @@ def buscar_produto():
 
     if produto:
 
-        resultado.set(f"Produto: {produto[1]}\nValidade: {produto[2]}\nLote: {produto[3]}\nQuantidade: {produto[4]}")
+        resultado.set(f"Produto: {produto[1]}\nValidade: {produto[2]}\nPeso: {produto[3]}\nQuantidade: {produto[4]}")
 
     else:
 
@@ -276,11 +276,11 @@ frame_inicio.pack(fill="both", expand=True)
 
 tk.Label(frame_inicio, text="📦 Sistema de Estoque", font=("Arial", 20, "bold")).pack(pady=40)
 
-tk.Button(frame_inicio, text="1️⃣ Cadastrar com Leitor", width=30, height=2, command=lambda: trocar_tela(frame_cadastrar)).pack(pady=10)
+tk.Button(frame_inicio, text="1 - Cadastrar com Leitor", width=30, height=2, command=lambda: trocar_tela(frame_cadastrar)).pack(pady=10)
 
-tk.Button(frame_inicio, text="2️⃣ Buscar Produto", width=30, height=2, command=lambda: trocar_tela(frame_buscar)).pack(pady=10)
+tk.Button(frame_inicio, text="2 -  Buscar Produto", width=30, height=2, command=lambda: trocar_tela(frame_buscar)).pack(pady=10)
 
-tk.Button(frame_inicio, text="3️⃣ Listar Produtos", width=30, height=2, command=lambda: [trocar_tela(frame_listar), listar_produtos()]).pack(pady=10)
+tk.Button(frame_inicio, text="3 - Listar Produtos", width=30, height=2, command=lambda: [trocar_tela(frame_listar), listar_produtos()]).pack(pady=10)
 
 
 
@@ -340,11 +340,11 @@ entry_validade.grid(row=1, column=1)
 
 
 
-tk.Label(frame_detalhes, text="Lote:").grid(row=2, column=0)
+tk.Label(frame_detalhes, text="Peso:").grid(row=2, column=0)
 
-entry_lote = tk.Entry(frame_detalhes)
+entry_Peso = tk.Entry(frame_detalhes)
 
-entry_lote.grid(row=2, column=1)
+entry_Peso.grid(row=2, column=1)
 
 
 
@@ -393,7 +393,7 @@ frame_listar = tk.Frame(root)
 
 tk.Label(frame_listar, text="Lista de Produtos", font=("Arial", 18, "bold")).pack(pady=10)
 
-cols = ("Código", "Nome", "Validade", "Lote", "Quantidade")
+cols = ("Código", "Nome", "Validade", "Peso", "Quantidade")
 
 tree = ttk.Treeview(frame_listar, columns=cols, show="headings")
 
