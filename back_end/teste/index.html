@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardápio Inteligente</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f7f7f7;
+        }
+        h1 {
+            color: #333;
+        }
+        .prato {
+            background: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .indisponivel {
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <h1>🍽️ Cardápio Inteligente</h1>
+    <div id="cardapio">Carregando cardápio...</div>
+
+    <script>
+        async function carregarCardapio() {
+            try {
+                const response = await fetch("http://127.0.0.1:5000/produtos/cardapio");
+                const data = await response.json();
+                const container = document.getElementById("cardapio");
+                container.innerHTML = "";
+
+                for (const [nome, info] of Object.entries(data)) {
+                    const pratoDiv = document.createElement("div");
+                    pratoDiv.className = "prato " + (info.disponivel ? "" : "indisponivel");
+                    pratoDiv.innerHTML = `
+                        <h2>${nome}</h2>
+                        <p><strong>Preço:</strong> R$ ${info.preco.toFixed(2)}</p>
+                        <p><strong>Status:</strong> ${info.disponivel ? "Disponível ✅" : "Indisponível ❌"}</p>
+                    `;
+                    container.appendChild(pratoDiv);
+                }
+            } catch (error) {
+                document.getElementById("cardapio").innerText = "Erro ao carregar cardápio.";
+                console.error(error);
+            }
+        }
+
+        carregarCardapio();
+    </script>
+</body>
+</html>

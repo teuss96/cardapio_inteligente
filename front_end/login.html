@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cardápio Inteligente • Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-login">
+  <header class="topbar">
+    <div class="container">
+      <div class="brand">Cardápio Inteligente</div>
+      <nav class="nav">
+        <a class="nav-link" href="index.html">Home</a>
+        <a class="nav-link active" href="login.html">Login Cliente</a>
+        <a class="nav-link" href="#restaurante">Login Restaurante</a>
+        <a class="nav-link" href="sobre.html">Sobre</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container content content-login">
+    <section class="login-opcoes">
+      <h2 class="titulo-secao">Entrar</h2>
+      <div class="login-grid">
+        <form class="login-card" id="loginCliente">
+          <h3>Login Cliente</h3>
+          <label>E-mail
+            <input type="email" placeholder="seu@email.com" required>
+          </label>
+          <label>Senha
+            <input type="password" placeholder="••••••••" required>
+          </label>
+          <button type="submit" class="btn primario">Entrar</button>
+          <p class="dica">ou <a href="index.html">acessar cardápio sem login</a></p>
+        </form>
+
+        <form class="login-card" id="restaurante">
+          <h3>Login Restaurante</h3>
+          <label>Usuário
+            <input type="text" placeholder="restaurante123" required>
+          </label>
+          <label>Senha
+            <input type="password" placeholder="••••••••" required>
+          </label>
+          <button type="submit" class="btn secundario">Entrar</button>
+          <p class="dica"><a href="index.html">acessar cardápio sem login</a></p>
+        </form>
+
+        <div class="login-card atalho">
+          <h3>Acessar sem login</h3>
+          <p>Você pode explorar o cardápio completo sem precisar autenticar.</p>
+          <a class="btn fantasma" href="index.html">Ir para o cardápio</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <div class="container">
+      <small>Centro de Estudos e Sistemas Avançados do Recife (CESAR) • Disciplina de Projeto 1 / 2025.2</small>
+    </div>
+  </footer>
+
+  <script src="api.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const formCliente = document.getElementById('loginCliente');
+      if (formCliente) {
+        formCliente.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          const email = this.querySelector('input[type="email"]').value;
+          const senha = this.querySelector('input[type="password"]').value;
+          
+          const resultado = await loginCliente(email, senha);
+          
+          if (resultado.erro) {
+            alert('Erro: ' + resultado.mensagem);
+          } else {
+            if (resultado.dados.token) {
+              localStorage.setItem('token', resultado.dados.token);
+              localStorage.setItem('tipoUsuario', 'cliente');
+            }
+            alert('Login realizado com sucesso!');
+            window.location.href = 'index.html';
+          }
+        });
+      }
+      
+      const formRestaurante = document.getElementById('restaurante');
+      if (formRestaurante) {
+        formRestaurante.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          const usuario = this.querySelector('input[type="text"]').value;
+          const senha = this.querySelector('input[type="password"]').value;
+          
+          const resultado = await loginRestaurante(usuario, senha);
+          
+          if (resultado.erro) {
+            alert('Erro: ' + resultado.mensagem);
+          } else {
+            if (resultado.dados.token) {
+              localStorage.setItem('token', resultado.dados.token);
+              localStorage.setItem('tipoUsuario', 'restaurante');
+            }
+            alert('Login realizado com sucesso!');
+            window.location.href = 'index.html';
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
+
+
