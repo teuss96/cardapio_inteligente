@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: flask-esp32
+    env: python
+    rootDir: backend  # ⬅️ ADICIONE ESTA LINHA
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --config gunicorn_config.py app:app
+    envVars:
+      - key: PORT
+        value: 10000
+    healthCheckPath: /health
+    autoDeploy: true
+    plan: free
