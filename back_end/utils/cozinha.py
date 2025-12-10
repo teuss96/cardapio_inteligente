@@ -1,11 +1,19 @@
 import json
+import os
+
+def _get_data_path(filename):
+    """Retorna o caminho absoluto para arquivos na pasta data"""
+    base_dir = os.path.dirname(os.path.dirname(__file__))
+    return os.path.join(base_dir, "data", filename)
 
 def carregar_cozinha():
-    with open("data/cozinha.json", "r", encoding="utf-8") as f:
+    cozinha_path = _get_data_path("cozinha.json")
+    with open(cozinha_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 def salvar_cozinha(dados):
-    with open("data/cozinha.json", "w", encoding="utf-8") as f:
+    cozinha_path = _get_data_path("cozinha.json")
+    with open(cozinha_path, "w", encoding="utf-8") as f:
         json.dump(dados, f, indent=2, ensure_ascii=False)
 
 def buscar_item(nome):

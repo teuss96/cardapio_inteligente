@@ -7,7 +7,7 @@ const CATEGORIAS = {
 const ORDEM_CATEGORIAS = ['Bebidas', 'Pratos', 'Sobremesas'];
 
 function criarCardPrato(prato) {
-  const disponivel = Boolean(prato.status);
+  const disponivel = Boolean(prato.status ?? prato.disponivel);
   const preco = Number(prato.preco ?? 0);
   const precoFmt = formatarPreco(preco);
   const imagem = prato.imagem || prato.foto || '';

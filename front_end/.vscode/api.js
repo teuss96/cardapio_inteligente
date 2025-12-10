@@ -1,5 +1,5 @@
 const API_CONFIG = {
-  BASE_URL: 'http://localhost:3000/api',
+  BASE_URL: 'http://localhost:5000',
   TIMEOUT: 10000,
   DEFAULT_HEADERS: {
     'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ async function requisicao(endpoint, opcoes = {}) {
   }
 }
 async function buscarCardapio() {
-  return await requisicao('/alimentos', { method: 'GET' });
+  return await requisicao('/produtos/cardapio', { method: 'GET' });
 }
 function mostrarNotificacao(mensagem, tipo = 'info') {
   const notificacaoAntiga = document.querySelector('.notificacao-toast');
