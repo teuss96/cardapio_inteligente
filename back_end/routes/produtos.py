@@ -51,7 +51,7 @@ def get_cardapio():
             "preco": preco,
             "categoria": "Pratos",
             "categoria_nome": "Pratos",
-            "desc": f"Delicioso {nome_formatado.lower()} preparado com ingredientes frescos.",
+            "desc": f"Deliciosa {nome_formatado.lower()} preparada com ingredientes frescos.",
             "status": disponivel,
             "disponivel": disponivel,
             "imagem": "",
