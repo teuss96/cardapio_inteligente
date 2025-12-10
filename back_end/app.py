@@ -7,7 +7,6 @@ from routes.produtos import produtos_bp
 app = Flask(__name__)
 CORS(app)
 
-# Registra as rotas da cozinha
 app.register_blueprint(cozinha_bp, url_prefix='/cozinha')
 app.register_blueprint(produtos_bp, url_prefix='/produtos')
 

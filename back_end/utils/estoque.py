@@ -2,23 +2,19 @@ import json
 import os
 
 def _get_data_path(filename):
-    """Retorna o caminho absoluto para arquivos na pasta data"""
     base_dir = os.path.dirname(os.path.dirname(__file__))
     return os.path.join(base_dir, "data", filename)
 
-# Carrega o estoque do arquivo JSON
 def carregar_estoque():
     estoque_path = _get_data_path("estoque.json")
     with open(estoque_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
-# Salva o estoque no arquivo JSON
 def salvar_estoque(estoque):
     estoque_path = _get_data_path("estoque.json")
     with open(estoque_path, "w", encoding="utf-8") as f:
         json.dump(estoque, f, indent=4)
 
-# Atualiza o peso de um ingrediente
 def atualizar_estoque(id_produto, peso):
     estoque = carregar_estoque()
     if id_produto in estoque:

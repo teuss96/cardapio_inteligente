@@ -1,4 +1,3 @@
-# enviar_produto.py
 import requests
 
 API_URL = "http://172.26.65.26:5000"
@@ -13,7 +12,6 @@ while True:
     
     
     try:
-        # Envia POST
         url = f"{API_URL}/cozinha/{produto}/ativo"
         response = requests.post(url, json={})
         

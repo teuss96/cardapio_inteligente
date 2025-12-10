@@ -119,7 +119,6 @@ async function carregarCardapio() {
   mostrarLoading(true);
   
   try {
-    // Buscar cardápio da API Python
     const resultado = await buscarCardapio();
     
     if (resultado.erro) {
@@ -130,7 +129,6 @@ async function carregarCardapio() {
     
     let pratos = resultado.dados;
     
-    // Suporte a diferentes formatos de resposta da API
     if (pratos && typeof pratos === 'object' && !Array.isArray(pratos)) {
       pratos = pratos.pratos || pratos.data || pratos.items || [];
     }
