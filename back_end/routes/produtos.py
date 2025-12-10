@@ -8,26 +8,26 @@ produtos_bp = Blueprint("produtos", __name__)
 
 @produtos_bp.route("/cardapio", methods=["GET"])
 def get_cardapio():
+    cardapio = []
+    
     try:
         base_dir = os.path.dirname(os.path.dirname(__file__))
         pratos_path = os.path.join(base_dir, "data", "pratos.json")
         
         if not os.path.exists(pratos_path):
-            return jsonify([]), 200
+            return jsonify(cardapio), 200
         
         with open(pratos_path, "r", encoding="utf-8") as f:
             pratos = json.load(f)
         
         if not pratos or len(pratos) == 0:
-            return jsonify([]), 200
+            return jsonify(cardapio), 200
         
         try:
             cozinha = carregar_cozinha()
         except:
             cozinha = {}
 
-        cardapio = []
-        
         for nome_prato, prato in pratos.items():
             ingredientes = prato.get("ingredientes", [])
             disponivel = True
@@ -81,8 +81,9 @@ def get_cardapio():
             
             cardapio.append(prato_formatado)
 
-        return jsonify(cardapio)
     except Exception as e:
-        return jsonify([]), 200
+        pass
+    
+    return jsonify(cardapio)
 
 

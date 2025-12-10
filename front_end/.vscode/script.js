@@ -13,7 +13,7 @@ function criarCardPrato(prato) {
   const imagem = prato.imagem || prato.foto || '';
   const nomePrato = escapeHtml(prato.nome || 'Alimento');
   const descPrato = escapeHtml(prato.desc || '');
-  const imgSrc = escapeHtml(imagem || 'https://via.placeholder.com/400x200/FBEDC8/75403C?text=Sem+Imagem');
+  const imgSrc = imagem ? escapeHtml(imagem) : '';
   const emPromocao = prato.promocao === true;
 
   const classes = ['card', 'prato'];
@@ -25,8 +25,9 @@ function criarCardPrato(prato) {
              data-id="${prato.id || ''}"
              data-nome="${nomePrato}"
              data-preco="${precoFmt}"
-             data-img="${imgSrc}"
+             data-img="${imgSrc || ''}"
              data-desc="${descPrato}"
+             data-disponivel="${disponivel}"
              data-promocao="${emPromocao ? 'true' : 'false'}">
       <h3 class="card-titulo">${nomePrato}</h3>
       <p class="card-desc">${descPrato || 'Descrição não disponível.'}</p>
@@ -121,33 +122,51 @@ async function carregarCardapio() {
   try {
     const resultado = await buscarCardapio();
     
-    console.log('Resultado da API:', resultado);
-    
     if (resultado.erro) {
       mostrarErro(resultado.mensagem);
-      console.error('Erro ao buscar cardápio:', resultado);
       return;
     }
     
     let pratos = resultado.dados;
     
     if (pratos && typeof pratos === 'object' && !Array.isArray(pratos)) {
-      pratos = pratos.pratos || pratos.data || pratos.items || [];
+      if (pratos.pratos) {
+        pratos = pratos.pratos;
+      } else if (pratos.data) {
+        pratos = pratos.data;
+      } else if (pratos.items) {
+        pratos = pratos.items;
+      } else {
+        const keys = Object.keys(pratos);
+        pratos = keys.map((key, index) => {
+          const item = pratos[key];
+          const nomeFormatado = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+          return {
+            id: key,
+            nome: nomeFormatado,
+            preco: item.preco || item.preco_base || 0,
+            categoria: "Pratos",
+            categoria_nome: "Pratos",
+            desc: item.desc || `Deliciosa ${key.replace(/_/g, ' ')} preparada com ingredientes frescos.`,
+            status: item.disponivel !== undefined ? item.disponivel : (item.status !== undefined ? item.status : true),
+            disponivel: item.disponivel !== undefined ? item.disponivel : (item.status !== undefined ? item.status : true),
+            imagem: item.imagem ? `assets/${item.imagem}` : '',
+            foto: item.imagem ? `assets/${item.imagem}` : '',
+            promocao: item.promocao || false
+          };
+        });
+      }
     }
     
     if (!Array.isArray(pratos)) {
       mostrarErro('Formato de dados inválido recebido do servidor.');
-      console.error('Dados recebidos:', pratos);
       return;
     }
     
     if (pratos.length === 0) {
-      mostrarErro('Nenhum prato disponível no momento. Verifique os ingredientes na cozinha.');
+      mostrarErro('Nenhum prato encontrado no cardápio.');
       return;
     }
-    
-    console.log(`✅ ${pratos.length} prato(s) carregado(s) com sucesso!`);
-    console.log('Pratos:', pratos);
     
     mostrarLoading(false);
     renderizarCardapio(pratos);
@@ -177,23 +196,33 @@ function inicializarModal() {
       return;
     }
 
-    const prato = e.target.closest('.prato');
-    if (prato && !prato.classList.contains('indisponivel')) {
-      const nome = prato.getAttribute('data-nome');
-      const preco = prato.getAttribute('data-preco');
-      const imgSrc = prato.getAttribute('data-img');
-      const descricao = prato.getAttribute('data-desc');
-      
-      if (title) title.textContent = nome || '';
-      if (img && imgSrc) {
-        img.src = imgSrc;
-        img.alt = `Imagem de ${nome}`;
+      const prato = e.target.closest('.prato');
+      if (prato) {
+        const nome = prato.getAttribute('data-nome');
+        const preco = prato.getAttribute('data-preco');
+        const imgSrc = prato.getAttribute('data-img');
+        const descricao = prato.getAttribute('data-desc');
+        
+        if (title) title.textContent = nome || '';
+        if (img) {
+          if (imgSrc && imgSrc.trim() !== '' && !imgSrc.includes('via.placeholder')) {
+            img.src = imgSrc;
+            img.alt = `Imagem de ${nome}`;
+            img.style.display = 'block';
+            img.onerror = function() {
+              this.onerror = null;
+              this.style.display = 'none';
+            };
+          } else {
+            img.style.display = 'none';
+            img.src = '';
+          }
+        }
+        if (price) price.textContent = preco || '';
+        if (desc) desc.textContent = descricao || 'Descrição não disponível.';
+        
+        modal.classList.add('show');
       }
-      if (price) price.textContent = preco || '';
-      if (desc) desc.textContent = descricao || 'Descrição não disponível.';
-      
-      modal.classList.add('show');
-    }
   }
 
   function fecharModal() {
