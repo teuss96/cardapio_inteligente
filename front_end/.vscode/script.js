@@ -131,10 +131,6 @@ async function carregarCardapio() {
     
     let pratos = resultado.dados;
     
-    console.log('Dados recebidos (antes do processamento):', pratos);
-    console.log('Tipo dos dados:', typeof pratos);
-    console.log('É array?', Array.isArray(pratos));
-    
     if (pratos && typeof pratos === 'object' && !Array.isArray(pratos)) {
       pratos = pratos.pratos || pratos.data || pratos.items || [];
     }
@@ -146,7 +142,6 @@ async function carregarCardapio() {
     }
     
     if (pratos.length === 0) {
-      console.warn('Array de pratos está vazio. Pode ser que todos os pratos estejam indisponíveis.');
       mostrarErro('Nenhum prato disponível no momento. Verifique os ingredientes na cozinha.');
       return;
     }
