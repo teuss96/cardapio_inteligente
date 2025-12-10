@@ -138,9 +138,23 @@ async function carregarCardapio() {
         pratos = pratos.items;
       } else {
         const keys = Object.keys(pratos);
+        const imagemMap = {
+          'pizza_marguerita': 'pizza_marguerita.jpg',
+          'salada': 'salada.jpg',
+          'feijoada': 'feijoada.jpg',
+          'lasanha': 'lasanha.jpg',
+          'moqueca': 'moqueca.jpg',
+          'coxinha': 'coxinha.jpg',
+          'carbonara': 'carbonara.jpg',
+          'torta_salgada': 'torta_salgada.jpg',
+          'panqueca': 'panqueca.jpg',
+          'empada': 'empada.jpg'
+        };
         pratos = keys.map((key, index) => {
           const item = pratos[key];
           const nomeFormatado = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+          const imagemNome = item.imagem || imagemMap[key] || '';
+          const imagemPath = imagemNome ? `assets/${imagemNome}` : '';
           return {
             id: key,
             nome: nomeFormatado,
@@ -150,8 +164,8 @@ async function carregarCardapio() {
             desc: item.desc || `Deliciosa ${key.replace(/_/g, ' ')} preparada com ingredientes frescos.`,
             status: item.disponivel !== undefined ? item.disponivel : (item.status !== undefined ? item.status : true),
             disponivel: item.disponivel !== undefined ? item.disponivel : (item.status !== undefined ? item.status : true),
-            imagem: item.imagem ? `assets/${item.imagem}` : '',
-            foto: item.imagem ? `assets/${item.imagem}` : '',
+            imagem: imagemPath,
+            foto: imagemPath,
             promocao: item.promocao || false
           };
         });
@@ -200,18 +214,25 @@ function inicializarModal() {
       if (prato) {
         const nome = prato.getAttribute('data-nome');
         const preco = prato.getAttribute('data-preco');
-        const imgSrc = prato.getAttribute('data-img');
+        let imgSrc = prato.getAttribute('data-img');
         const descricao = prato.getAttribute('data-desc');
         
         if (title) title.textContent = nome || '';
         if (img) {
           if (imgSrc && imgSrc.trim() !== '' && !imgSrc.includes('via.placeholder')) {
+            if (!imgSrc.startsWith('http') && !imgSrc.startsWith('/')) {
+              imgSrc = './' + imgSrc;
+            }
             img.src = imgSrc;
             img.alt = `Imagem de ${nome}`;
             img.style.display = 'block';
             img.onerror = function() {
+              console.warn('Erro ao carregar imagem:', imgSrc);
               this.onerror = null;
               this.style.display = 'none';
+            };
+            img.onload = function() {
+              this.style.display = 'block';
             };
           } else {
             img.style.display = 'none';
