@@ -40,3 +40,22 @@ def marcar_ativo(chave):
     if atualizar_produto_ativo(chave):
         return jsonify({"mensagem": f"Produto {chave} marcado como ATIVO"})
     return jsonify({"erro": f"Chave '{chave}' não encontrada"}), 404
+
+@cozinha_bp.route('/<chave>/peso', methods=['POST'])
+def atualizar_peso_endpoint(chave):
+    dados = request.get_json(force=True, silent=True) or {}
+    peso = dados.get('peso')
+    
+    if peso is None:
+        return jsonify({"erro": "Campo 'peso' é obrigatório"}), 400
+    
+    try:
+        peso_float = float(peso)
+        if peso_float < 0:
+            return jsonify({"erro": "Peso não pode ser negativo"}), 400
+    except (ValueError, TypeError):
+        return jsonify({"erro": "Peso deve ser um número válido"}), 400
+    
+    if atualizar_peso(chave, peso_float):
+        return jsonify({"mensagem": f"Peso do produto {chave} atualizado para {peso_float}g"})
+    return jsonify({"erro": f"Chave '{chave}' não encontrada"}), 404

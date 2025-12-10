@@ -83,6 +83,20 @@ void consultar_produto_ativo() {
   http.end();
 }
 
+bool atualizar_peso_produto(String chave, float peso) {
+  if (WiFi.status() != WL_CONNECTED) return false;
+  
+  HTTPClient http;
+  http.begin(String(API_BASE_URL) + "/cozinha/" + chave + "/peso");
+  http.addHeader("Content-Type", "application/json");
+  
+  String jsonPayload = "{\"peso\":" + String(peso, 1) + "}";
+  bool success = (http.POST(jsonPayload) == 200);
+  http.end();
+  
+  return success;
+}
+
 bool atualizar_status_produto(String chave, bool disponivel) {
   if (WiFi.status() != WL_CONNECTED) return false;
   
@@ -177,8 +191,10 @@ void loop() {
   lcd.print("g/");
   lcd.print(pesoMin,1);
 
-  
- 
+  if (produto_chave.length() > 0 && peso >= 0) {
+    atualizar_peso_produto(produto_chave, peso);
+  }
+
     bool abaixo_minimo = (peso <= pesoMin);
     
     if (abaixo_minimo) {
