@@ -45,6 +45,9 @@ def get_cardapio():
         
         nome_formatado = nome_prato.replace("_", " ").title()
         descricao = prato.get("desc", f"Deliciosa {nome_formatado.lower()} preparada com ingredientes frescos.")
+        imagem = prato.get("imagem", "")
+        if imagem:
+            imagem = f"assets/{imagem}"
         
         prato_formatado = {
             "id": nome_prato,
@@ -55,8 +58,8 @@ def get_cardapio():
             "desc": descricao,
             "status": disponivel,
             "disponivel": disponivel,
-            "imagem": "",
-            "foto": "",
+            "imagem": imagem,
+            "foto": imagem,
             "promocao": False
         }
         

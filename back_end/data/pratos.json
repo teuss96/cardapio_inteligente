@@ -2,51 +2,61 @@
   "pizza_marguerita": {
     "ingredientes": ["4", "5", "15"],
     "preco_base": 35.0,
-    "desc": "Pizza clássica italiana com molho de tomate, queijo mussarela derretido e manjericão fresco"
+    "desc": "Pizza clássica italiana com molho de tomate, queijo mussarela derretido e manjericão fresco",
+    "imagem": "pizza_marguerita.jpg"
   },
   "salada": {
     "ingredientes": ["6", "7", "11"],
     "preco_base": 18.0,
-    "desc": "Salada fresca com tomates selecionados, cebola roxa e temperada com azeite extra virgem"
+    "desc": "Salada fresca com tomates selecionados, cebola roxa e temperada com azeite extra virgem",
+    "imagem": "salada.jpg"
   },
   "feijoada": {
     "ingredientes": ["2", "9", "7", "8"],
     "preco_base": 42.0,
-    "desc": "Feijoada completa com feijão preto, carne moída, cebola e alho, servida com arroz"
+    "desc": "Feijoada completa com feijão preto, carne moída, cebola e alho, servida com arroz",
+    "imagem": "feijoada.jpg"
   },
   "lasanha": {
     "ingredientes": ["3", "4", "5", "9", "7", "8"],
     "preco_base": 45.0,
-    "desc": "Lasanha cremosa com camadas de massa, molho de tomate, queijo, carne moída, cebola e alho"
+    "desc": "Lasanha cremosa com camadas de massa, molho de tomate, queijo, carne moída, cebola e alho",
+    "imagem": "lasanha.jpg"
   },
   "moqueca": {
     "ingredientes": ["14", "6", "7", "11", "8"],
     "preco_base": 48.0,
-    "desc": "Moqueca de peixe com tomate, cebola, azeite e alho, temperada com especiarias"
+    "desc": "Moqueca de peixe com tomate, cebola, azeite e alho, temperada com especiarias",
+    "imagem": "moqueca.jpg"
   },
   "coxinha": {
     "ingredientes": ["10", "11", "8", "12"],
     "preco_base": 32.0,
-    "desc": "Coxinha crocante recheada com frango temperado com azeite, alho e sal"
+    "desc": "Coxinha crocante recheada com frango temperado com azeite, alho e sal",
+    "imagem": "coxinha.jpg"
   },
   "carbonara": {
     "ingredientes": ["3", "5", "9", "8"],
     "preco_base": 40.0,
-    "desc": "Macarronada à carbonara com queijo, carne moída e alho, cremosa e saborosa"
+    "desc": "Macarronada à carbonara com queijo, carne moída e alho, cremosa e saborosa",
+    "imagem": "carbonara.jpg"
   },
   "torta_salgada": {
     "ingredientes": ["5", "9", "7", "8"],
     "preco_base": 25.0,
-    "desc": "Torta salgada recheada com queijo, carne moída, cebola e alho, massa crocante"
+    "desc": "Torta salgada recheada com queijo, carne moída, cebola e alho, massa crocante",
+    "imagem": "torta_salgada.jpg"
   },
   "panqueca": {
     "ingredientes": ["5", "9", "4", "7"],
     "preco_base": 22.0,
-    "desc": "Panqueca recheada com queijo, carne moída, molho de tomate e cebola"
+    "desc": "Panqueca recheada com queijo, carne moída, molho de tomate e cebola",
+    "imagem": "panqueca.jpg"
   },
   "empada": {
     "ingredientes": ["10", "7", "8", "11"],
     "preco_base": 20.0,
-    "desc": "Empada de frango com cebola, alho e azeite, massa folhada crocante"
+    "desc": "Empada de frango com cebola, alho e azeite, massa folhada crocante",
+    "imagem": "empada.jpg"
   }
 }
