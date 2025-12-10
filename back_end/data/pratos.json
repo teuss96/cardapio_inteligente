@@ -1,15 +1,52 @@
 {
   "pizza_marguerita": {
-    "ingredientes": ["1","2"],
-    "preco_base": 35.0
+    "ingredientes": ["4", "5", "15"],
+    "preco_base": 35.0,
+    "desc": "Pizza clássica italiana com molho de tomate, queijo mussarela derretido e manjericão fresco"
   },
   "salada": {
-    "ingredientes": ["2"],
-    "preco_base": 18.0
-  }
-  ,
-  "macarronada":{
-     "ingredientes": ["3"],
-     "preco_base": 28.0
+    "ingredientes": ["6", "7", "11"],
+    "preco_base": 18.0,
+    "desc": "Salada fresca com tomates selecionados, cebola roxa e temperada com azeite extra virgem"
+  },
+  "feijoada": {
+    "ingredientes": ["2", "9", "7", "8"],
+    "preco_base": 42.0,
+    "desc": "Feijoada completa com feijão preto, carne moída, cebola e alho, servida com arroz"
+  },
+  "lasanha": {
+    "ingredientes": ["3", "4", "5", "9", "7", "8"],
+    "preco_base": 45.0,
+    "desc": "Lasanha cremosa com camadas de massa, molho de tomate, queijo, carne moída, cebola e alho"
+  },
+  "moqueca": {
+    "ingredientes": ["14", "6", "7", "11", "8"],
+    "preco_base": 48.0,
+    "desc": "Moqueca de peixe com tomate, cebola, azeite e alho, temperada com especiarias"
+  },
+  "coxinha": {
+    "ingredientes": ["10", "11", "8", "12"],
+    "preco_base": 32.0,
+    "desc": "Coxinha crocante recheada com frango temperado com azeite, alho e sal"
+  },
+  "carbonara": {
+    "ingredientes": ["3", "5", "9", "8"],
+    "preco_base": 40.0,
+    "desc": "Macarronada à carbonara com queijo, carne moída e alho, cremosa e saborosa"
+  },
+  "torta_salgada": {
+    "ingredientes": ["5", "9", "7", "8"],
+    "preco_base": 25.0,
+    "desc": "Torta salgada recheada com queijo, carne moída, cebola e alho, massa crocante"
+  },
+  "panqueca": {
+    "ingredientes": ["5", "9", "4", "7"],
+    "preco_base": 22.0,
+    "desc": "Panqueca recheada com queijo, carne moída, molho de tomate e cebola"
+  },
+  "empada": {
+    "ingredientes": ["10", "7", "8", "11"],
+    "preco_base": 20.0,
+    "desc": "Empada de frango com cebola, alho e azeite, massa folhada crocante"
   }
 }

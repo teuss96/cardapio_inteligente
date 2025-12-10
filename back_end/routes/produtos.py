@@ -44,6 +44,7 @@ def get_cardapio():
         preco = atualizar_preco(prato, cozinha, prato.get("preco_base", 0))
         
         nome_formatado = nome_prato.replace("_", " ").title()
+        descricao = prato.get("desc", f"Deliciosa {nome_formatado.lower()} preparada com ingredientes frescos.")
         
         prato_formatado = {
             "id": nome_prato,
@@ -51,7 +52,7 @@ def get_cardapio():
             "preco": preco,
             "categoria": "Pratos",
             "categoria_nome": "Pratos",
-            "desc": f"Deliciosa {nome_formatado.lower()} preparada com ingredientes frescos.",
+            "desc": descricao,
             "status": disponivel,
             "disponivel": disponivel,
             "imagem": "",
