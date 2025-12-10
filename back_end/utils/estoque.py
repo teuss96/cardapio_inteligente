@@ -15,7 +15,6 @@ def atualizar_estoque(id_produto, peso):
     estoque = carregar_estoque()
     if id_produto in estoque:
         estoque[id_produto]["peso"] = peso
-    else:
-        estoque[id_produto] = {"peso": peso, "validade": "2025-12-31"}  # default
+        
     salvar_estoque(estoque)
     return estoque

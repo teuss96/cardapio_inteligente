@@ -1,51 +1,43 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
-import os
+from routes.cozinha import cozinha_bp
+from routes.produtos import produtos_bp
 
-# Importa blueprints
-try:
-    from routes.sensores import sensores_bp
-    from routes.produtos import produtos_bp
-    BLUEPRINTS_LOADED = True
-except ImportError as e:
-    print(f"⚠️ Aviso: Não foi possível carregar blueprints: {e}")
-    BLUEPRINTS_LOADED = False
 
 app = Flask(__name__)
-CORS(app)  # Permite CORS para todas as rotas
+CORS(app)
 
-# Registra blueprints apenas se carregados
-if BLUEPRINTS_LOADED:
-    app.register_blueprint(produtos_bp, url_prefix="/produtos")
-    app.register_blueprint(sensores_bp, url_prefix="/sensores")
-    print("✅ Blueprints registrados com sucesso")
-else:
-    print("⚠️ Servidor rodando sem blueprints")
+# Registra as rotas da cozinha
+app.register_blueprint(cozinha_bp, url_prefix='/cozinha')
+app.register_blueprint(produtos_bp, url_prefix='/produtos')
 
 @app.route('/')
 def home():
-    return {
+    return jsonify({
+        "mensagem": "Sistema da Cozinha",
         "status": "online",
-        "message": "Servidor Flask para ESP32",
         "endpoints": {
-            "sensores": "/sensores/dados",
-            "produtos": "/produtos/",
-            "health": "/health"
+            "ver_todos": "GET /cozinha",
+            "ver_item": "GET /cozinha/1",
+            "atualizar_ativo": "POST /cozinha/1/ativo",
+            "marcar_disponivel": "POST /cozinha/1/disponivel",
+            "marcar_indisponivel": "POST /cozinha/1/indisponivel",
+            "ver_ativo": "GET cozinha/ativo",
+            
         }
-    }
+    })
 
-@app.route('/health')
-def health_check():
-    """Endpoint para health check do Render"""
-    return {"status": "healthy"}, 200
-
-@app.route('/test')
-def test():
-    """Endpoint de teste simples"""
-    return {"message": "API funcionando!", "timestamp": "2024-01-01T00:00:00Z"}
-
-# Para desenvolvimento local
-if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 5000))
-    debug = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
-    app.run(host="0.0.0.0", port=port, debug=debug)
+if __name__ == '__main__':
+    print("=" * 50)
+    print("🚀 Servidor da Cozinha")
+    print("=" * 50)
+    print("Rodando em: http://localhost:5000")
+    print("Endpoints:")
+    print("  GET  /cozinha")
+    print("  GET  /cozinha/ativo")
+    print("  GET  /cozinha/1")
+    print("  POST /cozinha/1/ativo")
+    print("  POST /cozinha/1/disponivel")
+    print("  POST /cozinha/1/indisponivel")
+    print("=" * 50)
+    app.run(host='0.0.0.0', port=5000, debug=True)

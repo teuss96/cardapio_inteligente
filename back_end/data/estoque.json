@@ -1,5 +1,5 @@
 {
-  
-  "queijo": { "peso":100, "validade": "2025-10-30" },
-  "tomate": { "peso":100, "validade": "2026-10-30" }
+  "queijo": { "id": 1, "pesoMin": 100, "peso": 100, "validade": "2025-10-30", "quantidade": 3, "barcode": "7891234567890" },
+  "tomate": { "id": 2, "pesoMin": 10, "peso": 20, "validade": "2026-10-30", "quantidade": 20, "barcode": "7891234567891" },
+  "frango": { "id": 444, "pesoMin": 20, "peso": 50, "validade": "2026-10-31", "quantidade": 1, "barcode": "7891234567892" }
 }

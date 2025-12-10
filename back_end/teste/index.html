@@ -39,7 +39,7 @@
 
                 for (const [nome, info] of Object.entries(data)) {
                     const pratoDiv = document.createElement("div");
-                    pratoDiv.className = "prato " + (info.disponivel ? "" : "indisponivel");
+                    pratoDiv.className = "prato " + (info.disponivel ? "disponivel" : "indisponivel");
                     pratoDiv.innerHTML = `
                         <h2>${nome}</h2>
                         <p><strong>Preço:</strong> R$ ${info.preco.toFixed(2)}</p>

@@ -1,0 +1,32 @@
+{
+  "1": {
+    "id": 1,
+    "nome": "Queijo",
+    "peso": 101,
+    "pesoMin": 100,
+    "validade": "2026-10-08",
+    "disponivel": false,
+    "ativo": false,
+    "barcode": "7891234567890"
+  },
+  "2": {
+    "id": 2,
+    "nome": "Tomate",
+    "peso": 1,
+    "pesoMin": 10,
+    "validade": "2026-10-30",
+    "disponivel": true,
+    "ativo": false,
+    "barcode": "7891234567891"
+  },
+  "3": {
+    "id": 3,
+    "nome": "Frango",
+    "peso": 10,
+    "pesoMin": 20,
+    "validade": "2025-10-31",
+    "disponivel": false,
+    "ativo": true,
+    "barcode": "7891234567892"
+  }
+}
