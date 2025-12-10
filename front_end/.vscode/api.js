@@ -1,5 +1,5 @@
 const API_CONFIG = {
-  BASE_URL: 'http://localhost:5000',
+  BASE_URL: 'https://server-backend-cardapio-inteligente.onrender.com',
   TIMEOUT: 10000,
   DEFAULT_HEADERS: {
     'Content-Type': 'application/json',

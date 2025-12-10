@@ -121,6 +121,8 @@ async function carregarCardapio() {
   try {
     const resultado = await buscarCardapio();
     
+    console.log('Resultado da API:', resultado);
+    
     if (resultado.erro) {
       mostrarErro(resultado.mensagem);
       console.error('Erro ao buscar cardápio:', resultado);
@@ -128,6 +130,10 @@ async function carregarCardapio() {
     }
     
     let pratos = resultado.dados;
+    
+    console.log('Dados recebidos (antes do processamento):', pratos);
+    console.log('Tipo dos dados:', typeof pratos);
+    console.log('É array?', Array.isArray(pratos));
     
     if (pratos && typeof pratos === 'object' && !Array.isArray(pratos)) {
       pratos = pratos.pratos || pratos.data || pratos.items || [];
@@ -140,11 +146,13 @@ async function carregarCardapio() {
     }
     
     if (pratos.length === 0) {
-      mostrarErro('Nenhum prato encontrado no cardápio.');
+      console.warn('Array de pratos está vazio. Pode ser que todos os pratos estejam indisponíveis.');
+      mostrarErro('Nenhum prato disponível no momento. Verifique os ingredientes na cozinha.');
       return;
     }
     
     console.log(`✅ ${pratos.length} prato(s) carregado(s) com sucesso!`);
+    console.log('Pratos:', pratos);
     
     mostrarLoading(false);
     renderizarCardapio(pratos);

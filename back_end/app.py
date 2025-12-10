@@ -21,8 +21,8 @@ def home():
             "atualizar_ativo": "POST /cozinha/1/ativo",
             "marcar_disponivel": "POST /cozinha/1/disponivel",
             "marcar_indisponivel": "POST /cozinha/1/indisponivel",
-            "ver_ativo": "GET cozinha/ativo",
-            
+            "ver_ativo": "GET /cozinha/ativo",
+            "cardapio": "GET /produtos/cardapio"
         }
     })
 
