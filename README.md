@@ -425,8 +425,8 @@ Abaixo está a organização completa das pastas:
 
 - **[João Mafra]**   
 - **[Marina Marinho]** 
-- **[Renata ]** 
-- **[Pedro ]** 
-- **[isaac]** 
-- **[Artur]** 
+- **[Renata Mariana]** 
+- **[Pedro Henrique]** 
+- **[Isaac Alessandro ]** 
+- **[Artur Apolinario]** 
 - **[Mateus Reinaux]**  
