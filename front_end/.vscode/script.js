@@ -148,7 +148,16 @@ async function carregarCardapio() {
           'carbonara': 'carbonara.jpg',
           'torta_salgada': 'torta_salgada.jpg',
           'panqueca': 'panqueca.jpg',
-          'empada': 'empada.jpg'
+          'empada': 'empada.jpg',
+          'bolo_maizena': 'bolo_maizena.jpg',
+          'creme_cafe': 'creme_cafe.jpg',
+          'macarrao_molho': 'macarrao_molho.jpg',
+          'pipoca_doce': 'pipoca_doce.jpg',
+          'arroz_cremoso': 'arroz_cremoso.jpg',
+          'torta_atum': 'torta_atum.jpg',
+          'mousse_cafe': 'mousse_cafe.jpg',
+          'salgado_atum': 'salgado_atum.jpg',
+          'cafe_cremoso': 'cafe_cremoso.jpg'
         };
         pratos = keys.map((key, index) => {
           const item = pratos[key];
